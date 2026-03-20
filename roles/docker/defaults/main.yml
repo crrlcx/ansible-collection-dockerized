@@ -1,0 +1,57 @@
+---
+# Docker version
+docker_version: 20.10.16
+
+# Docker directories
+docker_conf_dir: /etc/docker
+docker_data_dir: /var/lib/docker
+
+# Docker registry variables
+docker_registry: ""
+docker_registry_provider: docker
+docker_registry_password: ""
+docker_registry_username: ""
+
+# Docker apt repository
+docker_apt_repo_url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}"
+docker_apt_key_url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+
+# Python module for docker
+docker_pip_install: true
+docker_pip_index_url: https://pypi.org/simple/
+
+# Docker prune feature toggle
+docker_prune_enable: false
+docker_prune_period: 24h
+docker_prune_args: "--all --force --volumes"
+
+# docker containers force flags
+docker_force_pull: false
+docker_force_restart: false
+
+# Docker state toggle
+docker_handler_state: restarted
+
+# Docker configuration variables
+docker_daemon_config:
+  bip: 10.102.0.1/16
+  data-root: "{{ docker_data_dir }}"
+  default-address-pools:
+    - base: 10.102.0.0/16
+      size: 28
+  default-ulimits:
+    nofile:
+      Name: "nofile"
+      Hard: 65536
+      Soft: 65536
+  experimental: true
+  live-restore: true
+  log-driver: "json-file"
+  log-opts:
+    cache-compress: "true"
+    cache-disabled: "false"
+    cache-max-file: "2"
+    cache-max-size: "100m"
+    max-file: "2"
+    max-size: "100m"
+  storage-driver: "overlay2"

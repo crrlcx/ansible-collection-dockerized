@@ -1,0 +1,18 @@
+---
+- name: Stop timer
+  ansible.builtin.systemd:
+    name: docker-prune.timer
+    state: stopped
+    enabled: false
+  notify:
+    - prune docker
+
+- name: Remove systemd timer and service for clean useless docker data
+  ansible.builtin.file:
+    path: "/etc/systemd/system/{{ item | regex_replace('.j2', '') }}"
+    state: absent
+  loop:
+    - docker-prune.service.j2
+    - docker-prune.timer.j2
+  notify:
+    - prune docker

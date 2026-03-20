@@ -1,0 +1,28 @@
+---
+# Check that docker registry is online
+- name: Check docker registry online
+  ansible.builtin.uri:
+    url: "https://{{ docker_registry | split('/') | first }}"
+    method: GET
+    validate_certs: false
+  register: docker_registry_online
+  until: (docker_registry_online.status == 200 or docker_registry_online.status == 301)
+  failed_when:
+    - docker_registry_online.status != 200
+    - docker_registry_online.status != 301
+  ignore_errors: true
+  ignore_unreachable: true
+  retries: 3
+  delay: 6
+
+# Docker login command (simple)
+- name: Login to source repo
+  community.docker.docker_login:
+    registry_url: "{{ docker_registry }}"
+    username: "{{ docker_registry_username | d(omit) }}"
+    password: "{{ docker_registry_password | d(omit) }}"
+  retries: 3
+  delay: 6
+  when:
+    - docker_registry_provider in ['docker', 'basic']
+    - docker_registry_online is successful

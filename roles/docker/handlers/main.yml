@@ -1,0 +1,23 @@
+---
+- name: Reload systemd daemon if template is changed
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when:
+    - ansible_service_mgr == 'systemd'
+  listen:
+    - restart docker
+    - prune docker
+
+- name: Check docker service has `docker_handler_state` state
+  ansible.builtin.service:
+    name: docker
+    state: "{{ docker_handler_state }}"
+    enabled: "{{ docker_handler_state != 'stopped' | bool }}"
+  listen:
+    - restart docker
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+  listen:
+    - update apt cache

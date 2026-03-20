@@ -1,0 +1,9 @@
+#jinja2: lstrip_blocks: True, trim_blocks: True
+{{ ansible_managed | comment }}
+[Unit]
+Description=Prune unused Docker images
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/docker system prune {{ docker_prune_args }}

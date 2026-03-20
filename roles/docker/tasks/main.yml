@@ -1,0 +1,114 @@
+---
+# Variables
+- name: Load a variable file based on the OS type, or a default if not found.
+  ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_distribution_release | lower }}.yml"
+        - default.yml
+      paths:
+        - "vars/{{ ansible_os_family | lower }}"
+
+- name: Add repo using key from URL
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: deb
+    uris: "{{ docker_apt_repo_url }}"
+    suites: "{{ ansible_distribution_release | lower }}"
+    components: stable
+    architectures: amd64
+    signed_by: "{{ docker_apt_key_url }}"
+  when:
+    - docker_apt_repo_url | length > 0
+    - docker_apt_key_url | length > 0
+  notify:
+    - update apt cache
+
+- name: Ensure apt cache is updated before package install
+  ansible.builtin.meta: flush_handlers
+
+- name: Install list of packages
+  ansible.builtin.apt:
+    name:
+      - "docker-ce-cli=5:{{ docker_version }}*"
+      - "docker-ce=5:{{ docker_version }}*"
+      - "docker-compose-plugin=2.*"
+      - docker-buildx-plugin
+      - apt-transport-https
+      - atop
+      - ca-certificates
+      - curl
+      - gnupg2
+      - jq
+      - ncdu
+      - pass
+      - python3-docker
+      - python3-pip
+    state: present
+    allow_downgrade: true
+    update_cache: true
+    cache_valid_time: 3600
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  notify:
+    - restart docker
+
+- name: Create docker config directory
+  ansible.builtin.file:
+    path: "{{ docker_conf_dir }}"
+    state: directory
+    owner: root
+    group: docker
+    mode: "0775"
+  notify:
+    - restart docker
+
+- name: Create docker data directory
+  ansible.builtin.file:
+    path: "{{ docker_data_dir }}"
+    state: directory
+    owner: root
+    group: docker
+    mode: "0710"
+  notify:
+    - restart docker
+
+- name: Configure docker daemon
+  ansible.builtin.copy:
+    content: "{{ docker_daemon_config | to_nice_json(indent=2) }}"
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: docker
+    mode: "0644"
+  when:
+    - docker_daemon_config | length > 0
+  notify:
+    - restart docker
+
+- name: Ensure handlers are notified now to avoid firewall conflicts.
+  ansible.builtin.meta: flush_handlers
+
+- name: Include Docker pip tasks
+  ansible.builtin.include_tasks: docker-pip.yml
+  when:
+    - docker_pip_install
+
+- name: Include Docker prune on tasks
+  ansible.builtin.include_tasks: docker-prune-on.yml
+  when:
+    - ansible_service_mgr == 'systemd'
+    - docker_prune_enable
+
+- name: Include Docker prune off tasks
+  ansible.builtin.include_tasks: docker-prune-off.yml
+  when:
+    - ansible_service_mgr == 'systemd'
+    - not docker_prune_enable
+
+- name: Include Docker login tasks
+  ansible.builtin.include_tasks: docker-login.yml
+  when:
+    - docker_registry is defined
+    - docker_registry_provider is defined
+    - docker_registry not in ["", "none"]

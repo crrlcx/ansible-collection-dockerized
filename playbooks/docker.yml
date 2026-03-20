@@ -1,0 +1,9 @@
+---
+- name: Install docker at docker hosts
+  hosts: docker, !external
+  become: true
+  strategy: host_pinned
+  collections:
+    - crrlcx.dockerized
+  roles:
+    - role: crrlcx.dockerized.docker

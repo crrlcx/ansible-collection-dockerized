@@ -1,0 +1,22 @@
+---
+- name: Create systemd timer and service for clean useless docker data
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/etc/systemd/system/{{ item | regex_replace('.j2', '') }}"
+    backup: false
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - docker-prune.service.j2
+    - docker-prune.timer.j2
+  notify:
+    - prune docker
+
+- name: Set timer
+  ansible.builtin.systemd:
+    name: docker-prune.timer
+    state: restarted
+    enabled: true
+  notify:
+    - prune docker
