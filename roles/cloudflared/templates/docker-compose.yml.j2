@@ -2,13 +2,13 @@
 {{ ansible_managed | comment }}
 services:
   {{ cloudflare_datacenter }}:
-    container_name: cloudflared-{{ datacenter }}
+    container_name: cloudflared-{{ cloudflare_datacenter }}
     image: cloudflare/cloudflared:{{ cloudflared_version }}
     command: tunnel run
     devices:
       - /dev/net/tun
     network_mode: host
-{% if cloudflare_hosts_file is defined %}
+{% if cloudflare_hosts_file | length > 0 %}
     extra_hosts:
   {% for dn, ip in cloudflare_hosts_file.items() %}
       {{ dn }}: {{ ip }}

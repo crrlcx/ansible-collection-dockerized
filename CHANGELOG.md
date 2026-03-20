@@ -7,11 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.4] - 2026-03-21
+
+### Added
+
+- New zerotier role with configuration, tasks, and Docker Compose template
+
+### Changed
+
+- Update docker-compose templates to check length of hosts dictionary instead of existence of variable
+
+### Fixed
+
+- Fix docker-compose templates to use correct variable names for mtproxy and cloudflared
+
 ## [1.2.1] - 2026-03-20
 
 ### Added
 
-- cloudflared role with configuration, tasks, and Docker Compose template
+- New cloudflared role with configuration, tasks, and Docker Compose template
 
 ### Changed
 
@@ -33,21 +47,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.0] - 2026-03-20
 
-- mtproxy role with configuration, tasks, and Docker Compose template
+- New mtproxy role with configuration, tasks, and Docker Compose template
 
 ## [1.0.0] - 2026-03-20
 
 ### Added
 
 - First stable release of the Docker role.
-- Project structure and configuration files:
-  - .ansible-lint, .gitattributes, .gitignore, .yamllint
-- Documentation files:
-  - CHANGELOG.md, README.md
-- Ansible Galaxy integration files:
-  - galaxy.yml, meta/runtime.yml
-- Plugin documentation:
-  - plugins/README.md
 - Docker role features:
   - OS-based variable loading
   - Docker repository and GPG key management

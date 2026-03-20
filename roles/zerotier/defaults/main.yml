@@ -1,0 +1,15 @@
+---
+zerotier_version: router
+
+# zerotier directories
+zerotier_conf_dir: /opt/zerotier
+zerotier_data_dir: "/srv/zerotier/{{ datacenter }}"
+
+# docker compose options
+zerotier_force_pull: false
+zerotier_force_restart: false
+
+# zerotier
+zerotier_state: present
+zerotier_gateway_mode: inbound
+zerotier_network_ids: []

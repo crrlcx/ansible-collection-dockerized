@@ -1,0 +1,28 @@
+---
+- name: Create zerotier directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: docker
+    mode: "0755"
+  with_items:
+    - "{{ zerotier_conf_dir }}"
+    - "{{ zerotier_data_dir }}"
+
+- name: Create zerotier docker config
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ zerotier_conf_dir }}/docker-compose.yml"
+    owner: root
+    group: docker
+    mode: "0644"
+
+- name: Docker Compose start containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ zerotier_conf_dir }}"
+    files:
+      - docker-compose.yml
+    state: "{{ zerotier_state }}"
+    pull: "{{ zerotier_force_pull | ternary('always', 'policy') }}"
+    recreate: "{{ zerotier_force_restart | ternary('always', 'auto') }}"

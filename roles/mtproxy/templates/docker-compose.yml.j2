@@ -1,15 +1,15 @@
 #jinja2: lstrip_blocks: True, trim_blocks: True
 {{ ansible_managed | comment }}
 services:
-  {{ datacenter }}:
-    container_name: mtproxy-{{ datacenter }}
+  {{ mtproxy_datacenter }}:
+    container_name: mtproxy-{{ mtproxy_datacenter }}
     image: telegrammessenger/proxy:{{ mtproxy_version }}
     ports:
       - {{ mtproxy_https_port }}:443/tcp
     network_mode: bridge
-{% if metrics_hosts_file is defined %}
+{% if mtproxy_hosts_file  | length > 0 %}
     extra_hosts:
-  {% for dn, ip in metrics_hosts_file.items() %}
+  {% for dn, ip in mtproxy_hosts_file.items() %}
       {{ dn }}: {{ ip }}
   {% endfor %}
 {% endif %}

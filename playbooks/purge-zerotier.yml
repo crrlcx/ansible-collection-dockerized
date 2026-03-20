@@ -1,0 +1,13 @@
+---
+- name: Purge zerotier role
+  hosts: docker, !zerotier, !external
+  become: true
+  strategy: host_pinned
+  gather_facts: false
+  collections:
+    - crrlcx.dockerized
+  tasks:
+    - name: Purge zerotier role
+      ansible.builtin.include_role:
+        name: crrlcx.dockerized.zerotier
+        tasks_from: purge

@@ -1,0 +1,30 @@
+#jinja2: lstrip_blocks: True, trim_blocks: True
+{{ ansible_managed | comment }}
+services:
+  {{ zerotier_datacenter }}:
+    container_name: zerotier-{{ zerotier_datacenter }}
+    image: zyclonite/zerotier:{{ zerotier_version }}
+    devices:
+      - /dev/net/tun
+    network_mode: host
+{% if zerotier_hosts_file | length > 0 %}
+    extra_hosts:
+  {% for dn, ip in zerotier_hosts_file.items() %}
+      {{ dn }}: {{ ip }}
+  {% endfor %}
+{% endif %}
+    volumes:
+      - {{ zerotier_data_dir }}:/var/lib/zerotier-one
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - NET_RAW
+    restart: unless-stopped
+    environment:
+      - TZ={{ zerotier_timezone }}
+      - PUID=999
+      - PGID=994
+      - ZEROTIER_ONE_LOCAL_PHYS={{ ansible_default_ipv4.interface }}
+      - ZEROTIER_ONE_USE_IPTABLES_NFT=true
+      - ZEROTIER_ONE_GATEWAY_MODE={{ zerotier_gateway_mode }}
+      - ZEROTIER_ONE_NETWORK_IDS={{ zerotier_network_ids | join(' ') }}

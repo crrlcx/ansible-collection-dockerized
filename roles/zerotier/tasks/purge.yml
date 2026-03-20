@@ -1,0 +1,18 @@
+---
+- name: Docker Compose stop containers and remove images
+  community.docker.docker_compose_v2:
+    project_src: "{{ zerotier_conf_dir }}"
+    files:
+      - docker-compose.yml
+    state: absent
+    remove_orphans: true
+    remove_images: all
+    renew_anon_volumes: true
+
+- name: Purge zerotier directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ zerotier_conf_dir }}"
+    - "{{ zerotier_data_dir }}"
