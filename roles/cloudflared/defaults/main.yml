@@ -1,0 +1,16 @@
+---
+cloudflared_version: latest
+
+# cloudflared directories
+cloudflared_conf_dir: /opt/cloudflared
+
+# cloudflare datacenter
+cloudflare_datacenter: berlin
+cloudflare_timezone: Europe/Berlin
+
+# docker compose options
+cloudflared_state: present
+cloudflared_force_pull: false
+cloudflared_force_restart: false
+cloudflared_token: ""
+cloudflare_hosts_file: {}

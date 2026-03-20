@@ -1,0 +1,9 @@
+---
+- name: Add cloudflared role
+  hosts: cloudflared, !external
+  become: true
+  strategy: host_pinned
+  collections:
+    - crrlcx.dockerized
+  roles:
+    - role: crrlcx.dockerized.cloudflared

@@ -1,0 +1,26 @@
+#jinja2: lstrip_blocks: True, trim_blocks: True
+{{ ansible_managed | comment }}
+services:
+  {{ cloudflare_datacenter }}:
+    container_name: cloudflared-{{ datacenter }}
+    image: cloudflare/cloudflared:{{ cloudflared_version }}
+    command: tunnel run
+    devices:
+      - /dev/net/tun
+    network_mode: host
+{% if cloudflare_hosts_file is defined %}
+    extra_hosts:
+  {% for dn, ip in cloudflare_hosts_file.items() %}
+      {{ dn }}: {{ ip }}
+  {% endfor %}
+{% endif %}
+    restart: unless-stopped
+    environment:
+      - TZ={{ cloudflare_timezone }}
+      - TUNNEL_TOKEN={{ cloudflared_token }}
+    healthcheck:
+      test: ["CMD", "cloudflared", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

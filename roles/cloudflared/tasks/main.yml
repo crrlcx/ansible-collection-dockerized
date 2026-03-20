@@ -1,0 +1,27 @@
+---
+- name: Create cloudflared directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: docker
+    mode: "0755"
+  with_items:
+    - "{{ cloudflared_conf_dir }}"
+
+- name: Create cloudflared docker config
+  ansible.builtin.template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ cloudflared_conf_dir }}/docker-compose.yml"
+    owner: root
+    group: docker
+    mode: "0644"
+
+- name: Docker Compose start containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ cloudflared_conf_dir }}"
+    files:
+      - docker-compose.yml
+    state: "{{ cloudflared_state }}"
+    pull: "{{ cloudflared_force_pull | ternary('always', 'policy') }}"
+    recreate: "{{ cloudflared_force_restart | ternary('always', 'auto') }}"

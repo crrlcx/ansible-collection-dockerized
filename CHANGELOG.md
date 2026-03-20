@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-03-20
+
+### Added
+
+- cloudflared role with configuration, tasks, and Docker Compose template
+
+### Changed
+
+- Update mtproxy role: hosts file variable should be a dictionary, not a list
+
 ## [1.1.2] - 2026-03-20
 
 ### Changed

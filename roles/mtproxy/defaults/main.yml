@@ -19,4 +19,4 @@ mtproxy_force_restart: false
 mtproxy_secret:
   - "{{ lookup('password', '/dev/null length=16 chars=hexdigits') }}"
   - "{{ lookup('password', '/dev/null length=16 chars=hexdigits') }}"
-mtproxy_hosts_file: []
+mtproxy_hosts_file: {}

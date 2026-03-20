@@ -1,0 +1,13 @@
+---
+- name: Purge cloudflared role
+  hosts: docker, !cloudflared, !external
+  become: true
+  strategy: host_pinned
+  gather_facts: false
+  collections:
+    - crrlcx.dockerized
+  tasks:
+    - name: Purge cloudflared role
+      ansible.builtin.include_role:
+        name: crrlcx.dockerized.cloudflared
+        tasks_from: purge
