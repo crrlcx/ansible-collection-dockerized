@@ -1,0 +1,13 @@
+---
+- name: Purge mtproxy role
+  hosts: docker, !mtproxy, !external
+  become: true
+  strategy: host_pinned
+  gather_facts: false
+  collections:
+    - crrlcx.dockerized
+  tasks:
+    - name: Purge mtproxy role
+      ansible.builtin.include_role:
+        name: crrlcx.dockerized.mtproxy
+        tasks_from: purge

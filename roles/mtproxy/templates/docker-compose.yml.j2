@@ -1,0 +1,32 @@
+#jinja2: lstrip_blocks: True, trim_blocks: True
+{{ ansible_managed | comment }}
+services:
+  {{ datacenter }}:
+    container_name: mtproxy-{{ datacenter }}
+    image: telegrammessenger/proxy:{{ mtproxy_version }}
+    ports:
+      - {{ mtproxy_https_port }}:443/tcp
+    network_mode: bridge
+{% if metrics_hosts_file is defined %}
+    extra_hosts:
+  {% for dn, ip in metrics_hosts_file.items() %}
+      {{ dn }}: {{ ip }}
+  {% endfor %}
+{% endif %}
+    restart: unless-stopped
+    volumes:
+      - {{ mtproxy_data_dir }}:/data
+    ulimits:
+      memlock: -1
+      nofile: {{ 32777 * (mtproxy_secret | length) }}
+    environment:
+      - TZ={{ mtproxy_timezone }}
+      - SECRET={{ mtproxy_secret | join(',') | d('') }}
+      - SECRET_COUNT={{ mtproxy_secret | length | d(2)}}
+      - WORKERS={{ mtproxy_secret | length | d(2) }}
+    healthcheck:
+      test: "ss -lnt | grep -q ':443'"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

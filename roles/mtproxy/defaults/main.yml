@@ -1,0 +1,20 @@
+---
+mtproxy_version: latest
+
+# mtproxy directories
+mtproxy_conf_dir: /opt/mtproxy
+mtproxy_data_dir: /srv/mtproxy
+
+# mtproxy datacenter
+mtproxy_datacenter: berlin
+mtproxy_timezone: Europe/Berlin
+
+# mtproxy ports
+mtproxy_https_port: 443
+
+# docker compose options
+mtproxy_state: present
+mtproxy_force_pull: false
+mtproxy_force_restart: false
+mtproxy_secret: []
+mtproxy_hosts_file: []
