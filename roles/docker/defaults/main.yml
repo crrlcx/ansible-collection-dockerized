@@ -25,10 +25,6 @@ docker_prune_enable: false
 docker_prune_period: 24h
 docker_prune_args: "--all --force --volumes"
 
-# docker containers force flags
-docker_force_pull: false
-docker_force_restart: false
-
 # Docker state toggle
 docker_handler_state: restarted
 

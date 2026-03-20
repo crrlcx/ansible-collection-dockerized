@@ -4,6 +4,7 @@
     name: docker-prune.timer
     state: stopped
     enabled: false
+  failed_when: false
   notify:
     - prune docker
 

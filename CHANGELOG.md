@@ -7,9 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.1.0] - 2026-03-20
+## [1.1.2] - 2026-03-20
 
-### Added
+### Changed
+
+- Update mtproxy role with secret generation and configuration improvements
+
+### Removed
+
+- Remove unused docker template variables
+
+### Fixed
+
+- Fix docker-prune-off task to prevent failure when timer is not found
+
+## [1.1.0] - 2026-03-20
 
 - mtproxy role with configuration, tasks, and Docker Compose template
 

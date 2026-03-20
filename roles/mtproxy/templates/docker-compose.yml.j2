@@ -21,9 +21,9 @@ services:
       nofile: {{ 32777 * (mtproxy_secret | length) }}
     environment:
       - TZ={{ mtproxy_timezone }}
-      - SECRET={{ mtproxy_secret | join(',') | d('') }}
-      - SECRET_COUNT={{ mtproxy_secret | length | d(2)}}
-      - WORKERS={{ mtproxy_secret | length | d(2) }}
+      - SECRET={{ mtproxy_secret | join(',') }}
+      - SECRET_COUNT={{ mtproxy_secret | length}}
+      - WORKERS={{ mtproxy_secret | length }}
     healthcheck:
       test: "ss -lnt | grep -q ':443'"
       interval: 30s

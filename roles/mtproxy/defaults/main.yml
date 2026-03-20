@@ -16,5 +16,7 @@ mtproxy_https_port: 443
 mtproxy_state: present
 mtproxy_force_pull: false
 mtproxy_force_restart: false
-mtproxy_secret: []
+mtproxy_secret:
+  - "{{ lookup('password', '/dev/null length=16 chars=hexdigits') }}"
+  - "{{ lookup('password', '/dev/null length=16 chars=hexdigits') }}"
 mtproxy_hosts_file: []
