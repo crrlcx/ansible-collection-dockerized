@@ -1,0 +1,41 @@
+namespace: crrlcx
+name: dockerized
+version: 0.0.1
+readme: README.md
+authors:
+  - Carrol Cox <crrlcx@proton.me>
+description: Ansible collection for dockerized services.
+license:
+  - MIT
+  - Apache-2.0
+license_file: LICENSE
+tags:
+  - application
+  - debian
+  - docker
+  - linux
+  - ubuntu
+dependencies:
+  ansible.posix: ">=1.0.0"
+  community.crypto: ">=1.0.0"
+  community.general: ">=1.0.0"
+repository: https://github.com/crrlcx/ansible-collection-dockerized
+homepage: https://github.com/crrlcx/ansible-collection-dockerized
+issues: https://github.com/crrlcx/ansible-collection-dockerized
+build_ignore:
+  - .git*
+  - .gitattributes
+  - .github
+  - .gitignore
+  - .tox
+  - .yamllint
+  - codecov.yml
+  - galaxy.yml
+  - hacking
+  - molecule/*
+  - renovate.json
+  - requirements.txt
+  - test-requirements.txt
+  - tests
+  - tests/*
+  - tox.ini

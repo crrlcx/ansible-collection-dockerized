@@ -1,2 +1,3 @@
-# ansible-collection-dockerized
-Ansible collection for dockerized services
+# Ansible Collection - crrlcx.dockerized
+
+Documentation for the collection.
