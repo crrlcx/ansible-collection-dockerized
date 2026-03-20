@@ -5,7 +5,11 @@ All notable changes to the `crrlcx.dockerized` Ansible collection will be docume
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.5] - 2026-03-21
+
+### Fixed
+
+- Fix zerotier data directory variable by adding missed datacenter and timezone defaults
 
 ## [1.3.4] - 2026-03-21
 

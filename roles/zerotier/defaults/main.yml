@@ -3,13 +3,16 @@ zerotier_version: router
 
 # zerotier directories
 zerotier_conf_dir: /opt/zerotier
-zerotier_data_dir: "/srv/zerotier/{{ datacenter }}"
+zerotier_data_dir: "/srv/zerotier/{{ zerotier_datacenter }}"
+
+# zerotier datacenter
+zerotier_datacenter: berlin
+zerotier_timezone: Europe/Berlin
 
 # docker compose options
+zerotier_state: present
 zerotier_force_pull: false
 zerotier_force_restart: false
-
-# zerotier
-zerotier_state: present
 zerotier_gateway_mode: inbound
+zerotier_hosts_file: {}
 zerotier_network_ids: []
