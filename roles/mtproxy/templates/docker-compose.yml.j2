@@ -18,11 +18,11 @@ services:
       - {{ mtproxy_data_dir }}:/data
     ulimits:
       memlock: -1
-      nofile: {{ 32777 * (mtproxy_secret | length) }}
+      nofile: {{ 32777 * (( mtproxy_secret | length ) + 1) }}
     environment:
       - TZ={{ mtproxy_timezone }}
       - SECRET={{ mtproxy_secret | join(',') }}
-      - SECRET_COUNT={{ mtproxy_secret | length}}
+      - SECRET_COUNT={{ mtproxy_secret | length }}
       - WORKERS={{ mtproxy_secret | length }}
     healthcheck:
       test: "ss -lnt | grep -q ':443'"

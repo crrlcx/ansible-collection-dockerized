@@ -17,6 +17,5 @@ mtproxy_state: present
 mtproxy_force_pull: false
 mtproxy_force_restart: false
 mtproxy_secret:
-  - "{{ lookup('password', '/dev/null length=16 chars=hexdigits') }}"
-  - "{{ lookup('password', '/dev/null length=16 chars=hexdigits') }}"
+  - "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_lowercase', 'digits'], length=32, seed=inventory_hostname + ':1') }}"
 mtproxy_hosts_file: {}
