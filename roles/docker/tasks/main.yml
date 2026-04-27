@@ -33,7 +33,7 @@
     name:
       - "docker-ce-cli=5:{{ docker_version }}*"
       - "docker-ce=5:{{ docker_version }}*"
-      - "docker-compose-plugin=2.*"
+      - "docker-compose-plugin={{ docker_compose_version }}*"
       - docker-buildx-plugin
       - apt-transport-https
       - atop
