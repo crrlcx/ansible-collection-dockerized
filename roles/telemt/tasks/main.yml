@@ -1,0 +1,38 @@
+---
+- name: Create telemt directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: docker
+    mode: "0755"
+  with_items:
+    - "{{ telemt_conf_dir }}"
+    - "{{ telemt_data_dir }}"
+
+- name: Create telemt config files
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "{{ telemt_conf_dir }}/{{ item | basename | regex_replace('.j2', '') }}"
+    owner: root
+    group: docker
+    mode: "0644"
+  loop:
+    - docker-compose.yml.j2
+    - config.toml.j2
+
+- name: Docker Compose start containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ telemt_conf_dir }}"
+    files:
+      - docker-compose.yml
+    state: "{{ telemt_state }}"
+    pull: "{{ telemt_force_pull | ternary('always', 'policy') }}"
+    recreate: "{{ telemt_force_restart | ternary('always', 'auto') }}"
+
+- name: List telemt urls https://t.me/proxy?server=${SEVER}&port=${PORT}&secret=dd${SECRET}
+  ansible.builtin.debug:
+    msg: |
+      {% for item in telemt_secret %}
+      https://t.me/proxy?server={{ inventory_hostname }}&port={{ telemt_https_port }}&secret=dd{{ item }}
+      {% endfor %}

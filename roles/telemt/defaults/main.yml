@@ -1,0 +1,20 @@
+---
+telemt_version: latest
+
+# telemt directories
+telemt_conf_dir: /opt/telemt
+
+# telemt datacenter
+telemt_datacenter: berlin
+telemt_timezone: Europe/Berlin
+
+# telemt ports
+telemt_https_port: 443
+
+# docker compose options
+telemt_state: present
+telemt_force_pull: false
+telemt_force_restart: false
+telemt_tls_domain: googletagmanager.com
+telemt_secret: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_lowercase', 'digits'], length=32, seed=inventory_hostname + ':1') }}"
+telemt_hosts_file: {}

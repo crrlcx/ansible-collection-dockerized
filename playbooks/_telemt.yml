@@ -1,0 +1,13 @@
+---
+- name: Purge telemt role
+  hosts: docker, !telemt, !external
+  become: true
+  strategy: host_pinned
+  gather_facts: false
+  collections:
+    - crrlcx.dockerized
+  tasks:
+    - name: Purge telemt role
+      ansible.builtin.include_role:
+        name: crrlcx.dockerized.telemt
+        tasks_from: purge

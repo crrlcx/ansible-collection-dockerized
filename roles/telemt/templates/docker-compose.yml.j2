@@ -1,0 +1,45 @@
+#jinja2: lstrip_blocks: True, trim_blocks: True
+{{ ansible_managed | comment }}
+services:
+  {{ telemt_datacenter }}:
+    container_name: telemt-{{ telemt_datacenter }}
+    image: ghcr.io/telemt/telemt:{{ telemt_version }}
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - {{ telemt_https_port }}:443/tcp
+      - "127.0.0.1:9090:9090"
+      - "127.0.0.1:9091:9091"
+    network_mode: bridge
+{% if telemt_hosts_file  | length > 0 %}
+    extra_hosts:
+  {% for dn, ip in telemt_hosts_file.items() %}
+      {{ dn }}: {{ ip }}
+  {% endfor %}
+{% endif %}
+    restart: unless-stopped
+    volumes:
+      - {{ telemt_conf_dir }}/config.toml:/etc/telemt/config.toml:ro
+      - {{ telemt_data_dir }}:/data
+    tmpfs:
+      - /etc/telemt:rw,mode=1777,size=4m
+    working_dir: /etc/telemt
+    ulimits:
+      memlock: -1
+      nofile:
+        soft: 65536
+        hard: 262144
+    environment:
+      - TZ={{ telemt_timezone }}
+      - RUST_LOG=info
+    healthcheck:
+      test: [ "CMD", "/app/telemt", "healthcheck", "/etc/telemt/config.toml", "--mode", "liveness" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
