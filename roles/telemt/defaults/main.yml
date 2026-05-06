@@ -17,5 +17,5 @@ telemt_state: present
 telemt_force_pull: false
 telemt_force_restart: false
 telemt_tls_domain: googletagmanager.com
-telemt_secret: "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_lowercase', 'digits'], length=16, seed=inventory_hostname) }}"
+telemt_secret: "{{ lookup('ansible.builtin.password', '/dev/null', chars='0123456789abcdef', length=32, seed=inventory_hostname) }}"
 telemt_hosts_file: {}
