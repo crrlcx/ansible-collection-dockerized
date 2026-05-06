@@ -16,6 +16,7 @@ telemt_https_port: 443
 telemt_state: present
 telemt_force_pull: false
 telemt_force_restart: false
+telemt_log_level: silent
 telemt_tls_domain: googletagmanager.com
 telemt_secret: "{{ lookup('ansible.builtin.password', '/dev/null', chars='0123456789abcdef', length=32, seed=inventory_hostname) }}"
 telemt_hosts_file: {}

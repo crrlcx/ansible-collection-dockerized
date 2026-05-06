@@ -1,6 +1,6 @@
 namespace: crrlcx
 name: dockerized
-version: 1.4.3
+version: 1.4.7
 readme: README.md
 authors:
   - Carrol Cox <crrlcx@proton.me>

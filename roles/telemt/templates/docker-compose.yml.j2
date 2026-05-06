@@ -36,7 +36,7 @@ services:
         hard: 262144
     environment:
       - TZ={{ telemt_timezone }}
-      - RUST_LOG=info
+      - RUST_LOG={{ telemt_log_level }}
     healthcheck:
       test: [ "CMD", "/app/telemt", "healthcheck", "/etc/telemt/config.toml", "--mode", "liveness" ]
       interval: 30s

@@ -29,9 +29,9 @@
     pull: "{{ mtproxy_force_pull | ternary('always', 'policy') }}"
     recreate: "{{ mtproxy_force_restart | ternary('always', 'auto') }}"
 
-- name: List mtproxy urls https://t.me/proxy?server=${SEVER}&port=${PORT}&secret=dd${SECRET}
+- name: List mtproxy urls https://t.me/proxy?server=${SEVER}&port=${PORT}&secret=${SECRET}
   ansible.builtin.debug:
     msg: |
       {% for item in mtproxy_secret %}
-      https://t.me/proxy?server={{ inventory_hostname }}&port={{ mtproxy_https_port }}&secret=dd{{ item }}
+      https://t.me/proxy?server={{ inventory_hostname }}&port={{ mtproxy_https_port }}&secret={{ item }}
       {% endfor %}
