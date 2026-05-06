@@ -33,6 +33,4 @@
 - name: List telemt urls https://t.me/proxy?server=${SEVER}&port=${PORT}&secret=dd${SECRET}
   ansible.builtin.debug:
     msg: |
-      {% for item in telemt_secret %}
-      https://t.me/proxy?server={{ inventory_hostname }}&port={{ telemt_https_port }}&secret=dd{{ item }}
-      {% endfor %}
+      https://t.me/proxy?server={{ ansible_host }}&port={{ telemt_https_port }}&secret=dd{{ telemt_secret }}
