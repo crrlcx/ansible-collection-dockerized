@@ -9,13 +9,15 @@
   with_items:
     - "{{ cloudflared_conf_dir }}"
 
-- name: Create cloudflared docker config
+- name: Create cloudflared config files
   ansible.builtin.template:
-    src: "docker-compose.yml.j2"
-    dest: "{{ cloudflared_conf_dir }}/docker-compose.yml"
+    src: "{{ item }}"
+    dest: "{{ cloudflared_conf_dir }}/{{ item | basename | regex_replace('.j2', '') }}"
     owner: root
     group: docker
     mode: "0644"
+  loop:
+    - docker-compose.yml.j2
 
 - name: Docker Compose start containers
   community.docker.docker_compose_v2:
