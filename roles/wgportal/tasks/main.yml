@@ -9,6 +9,7 @@
   with_items:
     - "{{ wgportal_conf_dir }}"
     - "{{ wgportal_data_dir }}"
+    - /etc/systemd/networkd.conf.d
 
 - name: Create wgportal config files
   ansible.builtin.template:

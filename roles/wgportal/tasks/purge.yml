@@ -16,3 +16,4 @@
   with_items:
     - "{{ wgportal_conf_dir }}"
     - "{{ wgportal_data_dir }}"
+    - /etc/systemd/networkd.conf.d/99-wgportal.conf
