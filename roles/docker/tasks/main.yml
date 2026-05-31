@@ -97,13 +97,11 @@
 - name: Include Docker prune on tasks
   ansible.builtin.include_tasks: docker-prune-on.yml
   when:
-    - ansible_service_mgr == 'systemd'
     - docker_prune_enable
 
 - name: Include Docker prune off tasks
   ansible.builtin.include_tasks: docker-prune-off.yml
   when:
-    - ansible_service_mgr == 'systemd'
     - not docker_prune_enable
 
 - name: Include Docker login tasks

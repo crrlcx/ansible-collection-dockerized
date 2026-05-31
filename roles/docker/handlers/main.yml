@@ -2,8 +2,6 @@
 - name: Reload systemd daemon if template is changed
   ansible.builtin.systemd:
     daemon_reload: true
-  when:
-    - ansible_service_mgr == 'systemd'
   listen:
     - restart docker
     - prune docker

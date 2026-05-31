@@ -4,8 +4,9 @@
     name:
       - "{{ 'docker-py' if ansible_python_version is version('2.6', '<=') else 'docker' }}"
     state: present
+    break_system_packages: true
     extra_args: >-
-      --no-cache-dir --index-url {{ docker_pip_index_url }}{% if ansible_python_version is version('3.11', '>=') %} --break-system-packages{% endif %}
+      --no-cache-dir --index-url {{ docker_pip_index_url }}
   when:
     - ansible_python_version is defined
     - docker_pip_index_url is defined

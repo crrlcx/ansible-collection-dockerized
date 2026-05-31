@@ -2,9 +2,8 @@
 # Check that docker registry is online
 - name: Check docker registry online
   ansible.builtin.uri:
-    url: "https://{{ docker_registry | split('/') | first }}"
+    url: "https://{{ docker_registry }}"
     method: GET
-    validate_certs: false
   register: docker_registry_online
   until: (docker_registry_online.status == 200 or docker_registry_online.status == 301)
   failed_when:
