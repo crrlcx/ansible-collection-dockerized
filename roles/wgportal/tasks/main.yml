@@ -20,6 +20,30 @@
   loop:
     - docker-compose.yml.j2
 
+- name: Create host-mode systemd-networkd override for wgportal
+  ansible.builtin.template:
+    src: 99-wgportal.conf.j2
+    dest: /etc/systemd/networkd.conf.d/99-wgportal.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Restart systemd-networkd
+  when:
+    - wgportal_mode == 'host'
+
+- name: Remove host-mode systemd-networkd override for wgportal when not in host mode
+  ansible.builtin.file:
+    path: /etc/systemd/networkd.conf.d/99-wgportal.conf
+    state: absent
+  notify:
+    - Restart systemd-networkd
+  when:
+    - wgportal_mode != 'host'
+
+- name: Ensure networkd handlers are flushed
+  ansible.builtin.meta: flush_handlers
+
 - name: Docker Compose start containers
   community.docker.docker_compose_v2:
     project_src: "{{ wgportal_conf_dir }}"

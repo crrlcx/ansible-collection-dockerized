@@ -5,6 +5,12 @@ All notable changes to the `crrlcx.dockerized` Ansible collection will be docume
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.3] - 2026-05-31
+
+### Changed
+
+- `wgportal` role: add systemd-networkd handlers and configuration for host mode.
+
 ## [1.5.0] - 2026-05-31
 
 ### Added
