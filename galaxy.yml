@@ -1,6 +1,6 @@
 namespace: crrlcx
 name: dockerized
-version: 1.4.8
+version: 1.5.0
 readme: README.md
 authors:
   - Carrol Cox <crrlcx@proton.me>
@@ -17,6 +17,7 @@ tags:
   - ubuntu
   - mtproto
   - telegram
+  - wireguard
   - proxy
 dependencies:
   ansible.posix: ">=1.0.0"

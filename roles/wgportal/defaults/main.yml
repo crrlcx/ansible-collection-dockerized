@@ -1,0 +1,17 @@
+---
+wgportal_version: 2.0.0
+
+# wgportal datacenter
+wgportal_datacenter: berlin
+wgportal_timezone: Europe/Berlin
+
+# wgportal directories
+wgportal_conf_dir: /opt/wgportal
+wgportal_data_dir: "/srv/wgportal/{{ wgportal_datacenter }}"
+
+# docker compose options
+wgportal_state: present
+wgportal_force_pull: false
+wgportal_force_restart: false
+wgportal_mode: host
+wgportal_hosts_file: {}

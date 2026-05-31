@@ -5,6 +5,12 @@ All notable changes to the `crrlcx.dockerized` Ansible collection will be docume
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-05-31
+
+### Added
+
+- New `wgportal` role with configuration, tasks, and playbooks for managing wgportal services.
+
 ## [1.4.8] - 2026-05-31
 
 ### Changed

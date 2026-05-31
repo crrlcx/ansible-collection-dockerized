@@ -1,0 +1,13 @@
+---
+- name: Purge wgportal role
+  hosts: docker, !wgportal, !external
+  become: true
+  strategy: host_pinned
+  gather_facts: false
+  collections:
+    - crrlcx.dockerized
+  tasks:
+    - name: Purge wgportal role
+      ansible.builtin.include_role:
+        name: crrlcx.dockerized.wgportal
+        tasks_from: purge

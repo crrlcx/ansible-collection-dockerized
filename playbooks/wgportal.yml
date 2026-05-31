@@ -1,0 +1,9 @@
+---
+- name: Add wgportal role
+  hosts: wgportal, !external
+  become: true
+  strategy: host_pinned
+  collections:
+    - crrlcx.dockerized
+  roles:
+    - role: crrlcx.dockerized.wgportal
