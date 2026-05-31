@@ -5,6 +5,13 @@ All notable changes to the `crrlcx.dockerized` Ansible collection will be docume
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.8] - 2026-05-31
+
+### Changed
+
+- `docker` role: update `docker-pip` task for Python version compatibility.
+- `mtproxy` role: refine secret generation method for improved security and flexibility.
+
 ## [1.4.7] - 2026-05-07
 
 ### Changed
