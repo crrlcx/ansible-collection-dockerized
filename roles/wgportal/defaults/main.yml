@@ -1,5 +1,5 @@
 ---
-wgportal_version: 2.0.0
+wgportal_version: latest
 
 # wgportal datacenter
 wgportal_datacenter: berlin
@@ -15,3 +15,6 @@ wgportal_force_pull: false
 wgportal_force_restart: false
 wgportal_mode: host
 wgportal_hosts_file: {}
+
+wgportal_admin_username: admin@wgportal.local
+wgportal_admin_password: wgportal-default

@@ -8,6 +8,7 @@
     mode: "0755"
   with_items:
     - "{{ wgportal_conf_dir }}"
+    - "{{ wgportal_conf_dir }}/etc"
     - "{{ wgportal_data_dir }}"
     - /etc/systemd/networkd.conf.d
 
@@ -20,6 +21,7 @@
     mode: "0644"
   loop:
     - docker-compose.yml.j2
+    - config.yml.j2
 
 - name: Create host-mode systemd-networkd override for wgportal
   ansible.builtin.template:

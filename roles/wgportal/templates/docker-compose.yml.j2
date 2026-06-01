@@ -24,25 +24,26 @@ services:
     network_mode: host
     volumes:
       - /etc/wireguard:/etc/wireguard
-      - {{ wgportal_conf_dir }}/config:/app/config
+      - {{ wgportal_conf_dir }}/config.yml:/app/config/config.yml:ro
       - {{ wgportal_data_dir }}:/app/data
 {% elif wgportal_mode == 'single' %}
     network_mode: bridge
     ports:
-      - "51820:51820/udp"
       - "8888:8888/tcp"
+      - "51820:51820/udp"
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     volumes:
-      - {{ wgportal_conf_dir }}/config:/app/config
+      - {{ wgportal_conf_dir }}/etc:/etc/wireguard
+      - {{ wgportal_conf_dir }}/config.yml:/app/config/config.yml:ro
       - {{ wgportal_data_dir }}:/app/data
-{% elif wgportal_mode == 'bridge' %}
+{% elif wgportal_mode == 'service' %}
     network_mode: "service:wireguard"
     depends_on:
       - wireguard
     volumes:
       - {{ wgportal_conf_dir }}/etc:/etc/wireguard
-      - {{ wgportal_conf_dir }}/config:/app/config
+      - {{ wgportal_conf_dir }}/config.yml:/app/config/config.yml:ro
       - {{ wgportal_data_dir }}:/app/data
 
   wireguard:
@@ -52,12 +53,12 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
-      - "51820:51820/udp"
       - "8888:8888/tcp"
+      - "51820:51820/udp"
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     volumes:
-      - {{ wgportal_conf_dir }}/etc:/config/wg_confs
+      - {{ wgportal_conf_dir }}/etc:/etc/wireguard
 {% else %}
     # Unsupported wgportal_mode: {{ wgportal_mode }}
     # Valid values are: host, single, bridge
