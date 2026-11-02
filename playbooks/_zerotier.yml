@@ -1,9 +1,9 @@
 ---
 - name: Purge zerotier role
   hosts: docker, !zerotier, !external
-  become: true
   strategy: host_pinned
   gather_facts: false
+  become: true
   collections:
     - crrlcx.dockerized
   tasks:

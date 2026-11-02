@@ -1,8 +1,8 @@
 ---
 - name: Add mtproxy role
   hosts: mtproxy, !external
-  become: true
   strategy: host_pinned
+  become: true
   collections:
     - crrlcx.dockerized
   roles:

@@ -1,8 +1,8 @@
 ---
 - name: Add telemt role
   hosts: telemt, !external
-  become: true
   strategy: host_pinned
+  become: true
   collections:
     - crrlcx.dockerized
   roles:

@@ -1,9 +1,9 @@
 ---
 - name: Purge telemt role
   hosts: docker, !telemt, !external
-  become: true
   strategy: host_pinned
   gather_facts: false
+  become: true
   collections:
     - crrlcx.dockerized
   tasks:

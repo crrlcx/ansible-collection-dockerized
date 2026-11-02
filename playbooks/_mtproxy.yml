@@ -1,9 +1,9 @@
 ---
 - name: Purge mtproxy role
   hosts: docker, !mtproxy, !external
-  become: true
   strategy: host_pinned
   gather_facts: false
+  become: true
   collections:
     - crrlcx.dockerized
   tasks:

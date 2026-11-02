@@ -1,9 +1,9 @@
 ---
 - name: Purge wgportal role
   hosts: docker, !wgportal, !external
-  become: true
   strategy: host_pinned
   gather_facts: false
+  become: true
   collections:
     - crrlcx.dockerized
   tasks:
