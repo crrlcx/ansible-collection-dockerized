@@ -31,7 +31,14 @@
     recreate: "{{ telemt_force_restart | ternary('always', 'auto') }}"
 
 - name: Compute HEX_DOMAIN
-  ansible.builtin.shell: printf '%s' "{{ telemt_tls_domain }}" | hexdump -v -e '/1 "%02x"'
+  ansible.builtin.command:
+    argv:
+      - hexdump
+      - -v
+      - -e
+      - /1 "%02x"
+    stdin: "{{ telemt_tls_domain }}"
+    stdin_add_newline: false
   register: hex_domain
   changed_when: false
   check_mode: false
