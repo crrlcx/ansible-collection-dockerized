@@ -1,0 +1,13 @@
+---
+- name: Purge amneziawg role
+  hosts: docker, !amneziawg, !external
+  strategy: host_pinned
+  gather_facts: false
+  become: true
+  collections:
+    - crrlcx.dockerized
+  tasks:
+    - name: Purge amneziawg role
+      ansible.builtin.include_role:
+        name: crrlcx.dockerized.amneziawg
+        tasks_from: purge

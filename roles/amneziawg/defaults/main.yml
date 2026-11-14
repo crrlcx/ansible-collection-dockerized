@@ -1,0 +1,37 @@
+---
+amneziawg_version: latest
+
+# amneziawg directories
+amneziawg_conf_dir: /opt/amneziawg
+amneziawg_data_dir: /srv/amneziawg
+
+# amneziawg container
+# In client mode, place client configs in {{ amneziawg_data_dir }}/wg_confs.
+amneziawg_mode: server # client or server
+amneziawg_datacenter: berlin
+amneziawg_timezone: Europe/Berlin
+amneziawg_puid: 1000
+amneziawg_pgid: 1000
+
+# client configuration
+# For a file, set this to "{{ lookup('ansible.builtin.file', 'path/to/awg.conf') }}".
+amneziawg_client_config: ""
+
+# server configuration
+amneziawg_serverurl: auto
+amneziawg_serverport: 51820
+amneziawg_peers: peer1
+amneziawg_peerdns: auto
+amneziawg_internal_subnet: 10.8.1.0
+amneziawg_allowedips:
+  - 0.0.0.0/0
+  - ::/0
+amneziawg_persistentkeepalive_peers:
+  - peer1
+amneziawg_log_confs: false
+
+# docker compose options
+amneziawg_state: present
+amneziawg_force_pull: false
+amneziawg_force_restart: false
+amneziawg_hosts_file: {}

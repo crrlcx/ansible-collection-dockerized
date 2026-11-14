@@ -1,0 +1,9 @@
+---
+- name: Add amneziawg role
+  hosts: amneziawg, !external
+  strategy: host_pinned
+  become: true
+  collections:
+    - crrlcx.dockerized
+  roles:
+    - role: crrlcx.dockerized.amneziawg

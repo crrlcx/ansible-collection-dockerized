@@ -1,0 +1,53 @@
+---
+- name: Validate AmneziaWG mode
+  ansible.builtin.assert:
+    that:
+      - amneziawg_mode in ['server', 'client']
+    fail_msg: "amneziawg_mode must be either 'server' or 'client'"
+
+- name: Create amneziawg directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "0755"
+  loop:
+    - path: "{{ amneziawg_conf_dir }}"
+      owner: root
+      group: docker
+    - path: "{{ amneziawg_data_dir }}"
+      owner: "{{ amneziawg_puid }}"
+      group: "{{ amneziawg_pgid }}"
+    - path: "{{ amneziawg_data_dir }}/wg_confs"
+      owner: "{{ amneziawg_puid }}"
+      group: "{{ amneziawg_pgid }}"
+
+- name: Create amneziawg client config
+  ansible.builtin.copy:
+    content: "{{ amneziawg_client_config }}"
+    dest: "{{ amneziawg_data_dir }}/wg_confs/awg.conf"
+    owner: "{{ amneziawg_puid }}"
+    group: "{{ amneziawg_pgid }}"
+    mode: "0600"
+  when:
+    - amneziawg_mode == 'client'
+    - amneziawg_client_config | length > 0
+  no_log: true
+
+- name: Create amneziawg config files
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ amneziawg_conf_dir }}/docker-compose.yml"
+    owner: root
+    group: docker
+    mode: "0644"
+
+- name: Docker Compose start containers
+  community.docker.docker_compose_v2:
+    project_src: "{{ amneziawg_conf_dir }}"
+    files:
+      - docker-compose.yml
+    state: "{{ amneziawg_state }}"
+    pull: "{{ amneziawg_force_pull | ternary('always', 'policy') }}"
+    recreate: "{{ amneziawg_force_restart | ternary('always', 'auto') }}"
