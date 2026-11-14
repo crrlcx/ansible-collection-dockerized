@@ -1,6 +1,7 @@
+---
 namespace: crrlcx
 name: dockerized
-version: 1.6.1
+version: 1.6.2
 readme: README.md
 authors:
   - Carrol Cox <crrlcx@proton.me>
@@ -23,6 +24,7 @@ tags:
 dependencies:
   ansible.posix: ">=1.0.0"
   community.crypto: ">=1.0.0"
+  community.docker: ">=3.7.0"
   community.general: ">=1.0.0"
 repository: https://github.com/crrlcx/ansible-collection-dockerized
 homepage: https://github.com/crrlcx/ansible-collection-dockerized

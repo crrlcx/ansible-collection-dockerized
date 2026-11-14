@@ -4,11 +4,11 @@
   ansible.builtin.uri:
     url: "https://{{ docker_registry }}"
     method: GET
+    status_code: [200, 301, 401]
   register: docker_registry_online
-  until: (docker_registry_online.status == 200 or docker_registry_online.status == 301)
+  until: (docker_registry_online.status in [200, 301, 401])
   failed_when:
-    - docker_registry_online.status != 200
-    - docker_registry_online.status != 301
+    - docker_registry_online.status not in [200, 301, 401]
   ignore_errors: true
   ignore_unreachable: true
   retries: 3
