@@ -1,0 +1,37 @@
+---
+- name: Validate amneziawg client config mapping
+  ansible.builtin.assert:
+    that:
+      - (amneziawg_client_config.keys() | list | select('match', '^[A-Za-z0-9][A-Za-z0-9_-]{0,14}$') | list | length) == (amneziawg_client_config | length)
+      - (amneziawg_client_config.values() | select('string') | list | length) == (amneziawg_client_config | length)
+    fail_msg: "amneziawg_client_config must map interface names to config contents"
+  when: amneziawg_client_config | length > 0
+
+- name: Find existing amneziawg configs
+  ansible.builtin.find:
+    paths: "{{ amneziawg_data_dir }}/wg_confs"
+    patterns: "*.conf"
+    file_type: file
+  register: amneziawg_existing_client_configs
+
+- name: Remove stale amneziawg client configs
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ amneziawg_existing_client_configs.files }}"
+  when:
+    - item.path | basename | regex_replace('\\.conf$', '') not in amneziawg_client_config
+    - not (amneziawg_mode == 'hub' and item.path | basename == 'wg0.conf')
+  register: amneziawg_stale_client_configs_result
+
+- name: Create amneziawg client configs
+  ansible.builtin.copy:
+    content: "{{ item.value }}"
+    dest: "{{ amneziawg_data_dir }}/wg_confs/{{ item.key }}.conf"
+    owner: "{{ amneziawg_puid }}"
+    group: "{{ amneziawg_pgid }}"
+    mode: "0600"
+  loop: "{{ amneziawg_client_config | dict2items }}"
+  no_log: true
+  register: amneziawg_client_configs_result
+  when: amneziawg_client_config | length > 0

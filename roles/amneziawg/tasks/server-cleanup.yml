@@ -1,0 +1,36 @@
+---
+- name: Find existing amneziawg configs for server mode
+  ansible.builtin.find:
+    paths: "{{ amneziawg_data_dir }}/wg_confs"
+    patterns: "*.conf"
+    file_type: file
+  register: amneziawg_existing_server_configs
+
+- name: Remove amneziawg client configs in server mode
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ amneziawg_existing_server_configs.files }}"
+  when: item.path | basename != 'wg0.conf'
+  register: amneziawg_stale_client_configs_result
+
+- name: Remove amneziawg hub failover script in server mode
+  ansible.builtin.file:
+    path: "{{ amneziawg_data_dir }}/awg_failover.sh"
+    state: absent
+  register: amneziawg_hub_failover_script_removal_result
+
+- name: Check for amneziawg hub server template
+  ansible.builtin.stat:
+    path: "{{ amneziawg_data_dir }}/templates/server.conf"
+  register: amneziawg_hub_server_template
+
+- name: Remove hub template and generated config in server mode
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ amneziawg_data_dir }}/templates/server.conf"
+    - "{{ amneziawg_data_dir }}/wg_confs/wg0.conf"
+  when: amneziawg_hub_server_template.stat.exists
+  register: amneziawg_hub_server_config_removal_result

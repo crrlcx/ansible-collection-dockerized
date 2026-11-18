@@ -1,0 +1,25 @@
+---
+- name: Create amneziawg template directory
+  ansible.builtin.file:
+    path: "{{ amneziawg_data_dir }}/templates"
+    state: directory
+    owner: "{{ amneziawg_puid }}"
+    group: "{{ amneziawg_pgid }}"
+    mode: "0755"
+
+- name: Create amneziawg server template
+  ansible.builtin.template:
+    src: server.conf.j2
+    dest: "{{ amneziawg_data_dir }}/templates/server.conf"
+    owner: "{{ amneziawg_puid }}"
+    group: "{{ amneziawg_pgid }}"
+    mode: "0644"
+  register: amneziawg_server_template_result
+
+- name: Remove generated amneziawg server config when its template changes
+  ansible.builtin.file:
+    path: "{{ amneziawg_data_dir }}/wg_confs/wg0.conf"
+    state: absent
+  when: amneziawg_server_template_result.changed
+  # Must run before Compose recreates the container.
+  # noqa: no-handler

@@ -5,6 +5,12 @@ All notable changes to the `crrlcx.dockerized` Ansible collection will be docume
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.8] - 2026-11-18bbbb
+
+### Added
+
+- `amneziawg` role: add hub mode support, client configuration validation, and server cleanup tasks.
+
 ## [1.6.3] - 2026-11-14
 
 ### Changed

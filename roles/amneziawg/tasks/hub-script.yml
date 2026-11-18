@@ -1,0 +1,24 @@
+---
+- name: Validate inputs for the amneziawg hub script
+  ansible.builtin.assert:
+    that:
+      - amneziawg_client_config | length > 0
+      - (amneziawg_client_config.keys() | list | select('match', '^wg[1-9][0-9]{0,2}$') | list | length) == (amneziawg_client_config | length)
+    fail_msg: "Hub mode requires client configs keyed by interface names such as wg1 and wg2"
+
+- name: Create amneziawg hub failover script
+  ansible.builtin.template:
+    src: awg_failover.sh.j2
+    dest: "{{ amneziawg_data_dir }}/awg_failover.sh"
+    owner: root
+    group: docker
+    mode: "0755"
+  when: amneziawg_client_config | length > 1
+  register: amneziawg_hub_failover_script_result
+
+- name: Remove amneziawg hub failover script when only one upstream is configured
+  ansible.builtin.file:
+    path: "{{ amneziawg_data_dir }}/awg_failover.sh"
+    state: absent
+  when: amneziawg_client_config | length == 1
+  register: amneziawg_hub_failover_script_removal_result

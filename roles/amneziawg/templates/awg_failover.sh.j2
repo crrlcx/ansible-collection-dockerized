@@ -1,0 +1,70 @@
+#!/bin/bash
+set -u
+
+pid_file=/run/awg_failover.pid
+log_file=/config/awg_failover.log
+local_range="${INTERNAL_SUBNET}/24"
+target="{{ amneziawg_hub_healthcheck_target }}"
+
+tunnels=(
+{% for interface, config in amneziawg_client_config | dictsort %}
+  "{{ interface }};{{ (interface | regex_replace('^wg', '') | int) + 55110 }};{{ (interface | regex_replace('^wg', '') | int) + 10000 }}"
+{% endfor %}
+)
+
+remove_rule() {
+  while ip rule del pref "$1" from "$local_range" lookup "$2" >/dev/null 2>&1; do
+    :
+  done
+}
+
+monitor() {
+  trap 'rm -f "$pid_file"' EXIT
+  while sleep 20; do
+    for tunnel in "${tunnels[@]}"; do
+      IFS=';' read -r interface table priority <<< "$tunnel"
+      active_priority=$((priority + 1000))
+      if ping -q -c 1 -W 3 -I "$interface" "$target" >/dev/null 2>&1; then
+        selected_priority=$priority
+      else
+        selected_priority=$active_priority
+      fi
+      remove_rule "$priority" "$table"
+      remove_rule "$active_priority" "$table"
+      if ! ip rule add pref "$selected_priority" from "$local_range" lookup "$table"; then
+        printf '%s failed to update routing rule for %s\n' "$(date -Is)" "$interface" >> "$log_file"
+      fi
+    done
+  done
+}
+
+case "${1:-}" in
+  start)
+    if [ -f "$pid_file" ] && kill -0 "$(cat "$pid_file")" 2>/dev/null; then
+      exit 0
+    fi
+    nohup "$0" monitor >/dev/null 2>&1 &
+    echo "$!" > "$pid_file"
+    ;;
+  stop)
+    if [ -f "$pid_file" ]; then
+      pid=$(cat "$pid_file")
+      if kill -0 "$pid" 2>/dev/null; then
+        kill "$pid"
+      fi
+      rm -f "$pid_file"
+    fi
+    for tunnel in "${tunnels[@]}"; do
+      IFS=';' read -r interface table priority <<< "$tunnel"
+      remove_rule "$priority" "$table"
+      remove_rule "$((priority + 1000))" "$table"
+    done
+    ;;
+  monitor)
+    monitor
+    ;;
+  *)
+    printf 'Usage: %s {start|stop|monitor}\n' "$0" >&2
+    exit 2
+    ;;
+esac

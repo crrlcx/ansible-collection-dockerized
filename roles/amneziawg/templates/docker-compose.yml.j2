@@ -6,35 +6,40 @@ services:
     image: ghcr.io/ayastrebov/docker-amneziawg:{{ amneziawg_version }}
     cap_add:
       - NET_ADMIN
+{% if amneziawg_mode in ['server', 'hub'] %}
+      - SYS_MODULE
+{% endif %}
     devices:
       - /dev/net/tun:/dev/net/tun
     volumes:
       - {{ amneziawg_data_dir }}:/config
     sysctls:
-      net.ipv4.ip_forward: "1"
-      net.ipv4.conf.all.src_valid_mark: "1"
+      net.ipv4.ip_forward: 1
+      net.ipv4.conf.all.src_valid_mark: 1
     restart: unless-stopped
     environment:
       PUID: "{{ amneziawg_puid }}"
       PGID: "{{ amneziawg_pgid }}"
       TZ: "{{ amneziawg_timezone }}"
-{% if amneziawg_mode == 'server' %}
-      SERVERURL: "{{ amneziawg_serverurl }}"
-      SERVERPORT: "{{ amneziawg_serverport }}"
-      PEERS: "{{ amneziawg_peers }}"
-      PEERDNS: "{{ amneziawg_peerdns }}"
-      INTERNAL_SUBNET: "{{ amneziawg_internal_subnet }}"
-      ALLOWEDIPS: "{{ amneziawg_allowedips | join(', ') }}"
-      LOG_CONFS: "{{ amneziawg_log_confs | ternary('true', 'false') }}"
-{% if amneziawg_persistentkeepalive_peers | length > 0 %}
-      PERSISTENTKEEPALIVE_PEERS: "{{ amneziawg_persistentkeepalive_peers | join(',') }}"
-{% endif %}
-    ports:
-      - "{{ amneziawg_serverport }}:{{ amneziawg_serverport }}/udp"
-{% endif %}
 {% if amneziawg_hosts_file | length > 0 %}
     extra_hosts:
   {% for dn, ip in amneziawg_hosts_file.items() %}
       {{ dn }}: {{ ip }}
   {% endfor %}
+{% endif %}{% if amneziawg_mode in ['server', 'hub'] %}
+{% set server_settings = amneziawg_server_defaults | combine(amneziawg_server) %}
+{% for key, value in server_settings.items() %}
+      {{ key }}: {{ value | string | to_json }}
+{% endfor %}
+    ports:
+      - {{ server_settings.SERVERPORT }}:51820/udp
+    networks:
+      - amneziawg-{{ amneziawg_datacenter }}
+
+networks:
+  amneziawg-{{ amneziawg_datacenter }}:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: {{ server_settings.INTERNAL_SUBNET }}/24
 {% endif %}

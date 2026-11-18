@@ -2,8 +2,8 @@
 - name: Validate AmneziaWG mode
   ansible.builtin.assert:
     that:
-      - amneziawg_mode in ['server', 'client']
-    fail_msg: "amneziawg_mode must be either 'server' or 'client'"
+      - amneziawg_mode in ['server', 'client', 'hub']
+    fail_msg: "amneziawg_mode must be 'server', 'client', or 'hub'"
 
 - name: Create amneziawg directories
   ansible.builtin.file:
@@ -23,17 +23,25 @@
       owner: "{{ amneziawg_puid }}"
       group: "{{ amneziawg_pgid }}"
 
-- name: Create amneziawg client config
-  ansible.builtin.copy:
-    content: "{{ amneziawg_client_config }}"
-    dest: "{{ amneziawg_data_dir }}/wg_confs/awg.conf"
-    owner: "{{ amneziawg_puid }}"
-    group: "{{ amneziawg_pgid }}"
-    mode: "0600"
+- name: Create amneziawg client configs
+  ansible.builtin.include_tasks: client-configs.yml
+  when: amneziawg_mode in ['client', 'hub']
+
+- name: Create amneziawg hub script
+  ansible.builtin.include_tasks: hub-script.yml
+  when: amneziawg_mode == 'hub'
+
+- name: Clean hub files from amneziawg server mode
+  ansible.builtin.include_tasks: server-cleanup.yml
   when:
-    - amneziawg_mode == 'client'
-    - amneziawg_client_config | length > 0
-  no_log: true
+    - amneziawg_mode == 'server'
+    - amneziawg_state == 'present'
+
+- name: Create amneziawg hub config template
+  ansible.builtin.include_tasks: server-config.yml
+  when:
+    - amneziawg_mode == 'hub'
+    - amneziawg_state == 'present'
 
 - name: Create amneziawg config files
   ansible.builtin.template:
@@ -50,4 +58,15 @@
       - docker-compose.yml
     state: "{{ amneziawg_state }}"
     pull: "{{ amneziawg_force_pull | ternary('always', 'policy') }}"
-    recreate: "{{ amneziawg_force_restart | ternary('always', 'auto') }}"
+    recreate: >-
+      {{
+        (
+          amneziawg_force_restart
+          or (amneziawg_client_configs_result is defined and amneziawg_client_configs_result.changed)
+          or (amneziawg_stale_client_configs_result is defined and amneziawg_stale_client_configs_result.changed)
+          or (amneziawg_hub_failover_script_result is defined and amneziawg_hub_failover_script_result.changed)
+          or (amneziawg_hub_failover_script_removal_result is defined and amneziawg_hub_failover_script_removal_result.changed)
+          or (amneziawg_server_template_result is defined and amneziawg_server_template_result.changed)
+          or (amneziawg_hub_server_config_removal_result is defined and amneziawg_hub_server_config_removal_result.changed)
+        ) | ternary('always', 'auto')
+      }}

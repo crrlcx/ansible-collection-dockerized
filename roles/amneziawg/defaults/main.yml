@@ -6,29 +6,70 @@ amneziawg_conf_dir: /opt/amneziawg
 amneziawg_data_dir: /srv/amneziawg
 
 # amneziawg container
-# In client mode, place client configs in {{ amneziawg_data_dir }}/wg_confs.
-amneziawg_mode: server # client or server
+amneziawg_mode: server # client, server, or hub
 amneziawg_datacenter: berlin
 amneziawg_timezone: Europe/Berlin
 amneziawg_puid: 1000
 amneziawg_pgid: 1000
 
-# client configuration
-# For a file, set this to "{{ lookup('ansible.builtin.file', 'path/to/awg.conf') }}".
-amneziawg_client_config: ""
+# Config contents keyed by interface name; values may use the file lookup.
+# Hub configs must set Table=55110 plus the interface number and forwarding/NAT hooks.
+amneziawg_client_config: {}
+amneziawg_hub_healthcheck_target: 1.1.1.1
 
 # server configuration
-amneziawg_serverurl: auto
-amneziawg_serverport: 51820
-amneziawg_peers: peer1
-amneziawg_peerdns: auto
+amneziawg_server_url: auto
+amneziawg_server_port: 51820
 amneziawg_internal_subnet: 10.8.1.0
-amneziawg_allowedips:
+amneziawg_use_dns: false
+amneziawg_use_ipv6: false
+amneziawg_peer_dns: auto
+amneziawg_log_confs: false
+amneziawg_allowed_ips:
   - 0.0.0.0/0
   - ::/0
-amneziawg_persistentkeepalive_peers:
+amneziawg_peers:
   - peer1
-amneziawg_log_confs: false
+amneziawg_persistent_keepalive_peers: "{{ amneziawg_peers }}"
+
+amneziawg_server_defaults:
+  SERVERURL: "{{ amneziawg_server_url }}"
+  SERVERPORT: "{{ amneziawg_server_port }}"
+  PEERS: "{{ amneziawg_peers | join(',') }}"
+  PEERDNS: "{{ amneziawg_peer_dns }}"
+  INTERNAL_SUBNET: "{{ amneziawg_internal_subnet }}"
+  ALLOWEDIPS: "{{ amneziawg_allowed_ips | join(',') }}"
+  PERSISTENTKEEPALIVE_PEERS: "{{ amneziawg_persistent_keepalive_peers | join(',') }}"
+  LOG_CONFS: "{{ amneziawg_log_confs | ternary('true', 'false') }}"
+  USE_DNS: "{{ amneziawg_use_dns | ternary('true', 'false') }}"
+  IP6_SUBNET: "{{ amneziawg_use_ipv6 | ternary('auto', 'off') }}"
+  IP6_EXIT: "auto"
+
+amneziawg_server:
+  # AWG obfuscation signature for DPI bypass
+  AWG_VERSION: "3.1"
+  AWG_JC: 6
+  AWG_JMIN: 10
+  AWG_JMAX: 50
+  AWG_S1: 12
+  AWG_S2: 12
+  AWG_S3: 12
+  AWG_S4: 12
+  AWG_H1: 1
+  AWG_H2: 2
+  AWG_H3: 3
+  AWG_H4: 4
+  AWG_I1: "<r 2><b 0x858000010001000000000669636c6f756403636f6d0000010001c00c000100010000105a00044d583737>"
+  # AWG_I1: "<b 0xc0000000><r 16><t>" # QUIC Initial-like
+  # AWG_I1: "<b 0x170303><r 2><b 0x0100><t>" # TLS-like
+  AWG_CONTENT_PADDING: 0
+  AWG_REKEY_AFTER_TIME: "100-120"
+  AWG_REKEY_TIMEOUT: "3-7"
+  AWG_REJECT_AFTER_TIME: "150-180"
+  AWG_KEEPALIVE_TIMEOUT: "25-35"
+  AWG_MAX_HANDSHAKE_ATTEMPTS: 15-22
+  AWG_RANDOM_TRAILERS: "on"
+  AWG_DISABLE_COOKIES: "on"
 
 # docker compose options
 amneziawg_state: present
